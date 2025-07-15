@@ -1,17 +1,15 @@
-// backend-test-submission/app.ts
+
 
 import express from 'express';
-import { Log } from '../Logging Middleware'; // Adjust path as needed
+import { Log } from '../Logging Middleware'; 
 import { createShortUrl, getShortUrl, incrementClick } from './urlStore';
 import { generateShortcode, isValidShortcode, isValidUrl } from './utils';
 
 const app = express();
 app.use(express.json());
 
-const CLIENT_ID = 'eb8e4a55-794b-42b3-b464-b06be36cd654';
-const CLIENT_SECRET = 'PQGhgVpAxqwzbnVE';
-const token = ' QAhDUr'
-const HOSTNAME = 'http://localhost:3000'; // Change as needed
+const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJNYXBDbGFpbXMiOnsiYXVkIjoiaHR0cDovLzIwLjI0NC41Ni4xNDQvZXZhbHVhdGlvbi1zZXJ2aWNlIiwiZW1haWwiOiJnYXVyYXZqb3NoaWFhMUBnbWFpbC5jb20iLCJleHAiOjE3NTI1NTc4MzIsImlhdCI6MTc1MjU1NjkzMiwiaXNzIjoiQWZmb3JkIE1lZGljYWwgVGVjaG5vbG9naWVzIFByaXZhdGUgTGltaXRlZCIsImp0aSI6ImYxMTljMTQxLTcyZDYtNGQ0NC05YzU3LTVkMzMxYWI3ZTU2NSIsImxvY2FsZSI6ImVuLUlOIiwibmFtZSI6ImdhdXJhdiBqb3NoaSIsInN1YiI6ImViOGU0YTU1LTc5NGItNDJiMy1iNDY0LWIwNmJlMzZjZDY1NCJ9LCJlbWFpbCI6ImdhdXJhdmpvc2hpYWExQGdtYWlsLmNvbSIsIm5hbWUiOiJnYXVyYXYgam9zaGkiLCJyb2xsTm8iOiIyMjk0MDI5IiwiYWNjZXNzQ29kZSI6IlFBaERVciIsImNsaWVudElEIjoiZWI4ZTRhNTUtNzk0Yi00MmIzLWI0NjQtYjA2YmUzNmNkNjU0IiwiY2xpZW50U2VjcmV0IjoiUFFHaGdWcEF4cXd6Ym5WRSJ9.lXnXNP79VmcG-nVvl43OyQOtVaxtxu0FZT1IVSoN98Y'
+const HOSTNAME = 'http://localhost:3000'; 
 
 // POST /shorturls
 app.post('/shorturls', async (req, res) => {
