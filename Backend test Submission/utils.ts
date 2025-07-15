@@ -21,3 +21,43 @@ export function isValidUrl(url: string): boolean {
     return false;
   }
 }
+export async function fetchAccessToken({
+  email,
+  name,
+  rollNo,
+  accessCode,
+  clientID,
+  clientSecret,
+}: {
+  email: string;
+  name: string;
+  rollNo: string;
+  accessCode: string;
+  clientID: string;
+  clientSecret: string;
+}): Promise<string | null> {
+  try {
+    const response = await fetch('http://20.244.56.144/evaluation-service/auth', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        email,
+        name,
+        rollNo,
+        accessCode,
+        clientID,
+        clientSecret,
+      }),
+    });
+    if (!response.ok) {
+      console.error('Failed to fetch access token:', await response.text());
+      return null;
+    }
+    const data = await response.json();
+    // Assuming the token is in data.accessToken
+    return data.access_token;
+  } catch (err) {
+    console.error('Error fetching access token:', err);
+    return null;
+  }
+}

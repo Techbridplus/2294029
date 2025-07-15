@@ -26,7 +26,8 @@ interface LogOptions {
   level: Level;
   package: LogPackage;
   message: string;
-  accessToken: string,
+  accessToken:string;
+
 }
 
 const LOG_URL = 'http://20.244.56.144/evaluation-service/logs';
@@ -36,9 +37,11 @@ export async function Log({
   level,
   package: pkg,
   message,
-  accessToken,
+  accessToken
+
 }: LogOptions) {
   try {
+
     const response = await fetch(LOG_URL, {
       method: 'POST',
       headers: {
@@ -58,11 +61,11 @@ export async function Log({
       console.error('Failed to log:', errorText);
     } else {
       const data = await response.json();
-      // Optionally, you can log the logID or success message
-      // console.log('Log created:', data.logID);
+
       return data;
     }
   } catch (err) {
     console.error('Error sending log:', err);
   }
 }
+

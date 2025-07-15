@@ -16,12 +16,32 @@ const express_1 = __importDefault(require("express"));
 const Logging_Middleware_1 = require("../Logging Middleware");
 const urlStore_1 = require("./urlStore");
 const utils_1 = require("./utils");
+const config = {
+    email: "gauravjoshiaa1@gmail.com",
+    name: "Gaurav Joshi",
+    rollNo: "2294029",
+    accessCode: "QAhDUr",
+    clientID: "eb8e4a55-794b-42b3-b464-b06be36cd654",
+    clientSecret: "PQGhgVpAxqwzbnVE"
+};
 const app = (0, express_1.default)();
 app.use(express_1.default.json());
-const CLIENT_ID = 'eb8e4a55-794b-42b3-b464-b06be36cd654';
-const CLIENT_SECRET = 'PQGhgVpAxqwzbnVE';
-const token = ' eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJNYXBDbGFpbXMiOnsiYXVkIjoiaHR0cDovLzIwLjI0NC41Ni4xNDQvZXZhbHVhdGlvbi1zZXJ2aWNlIiwiZW1haWwiOiJnYXVyYXZqb3NoaWFhMUBnbWFpbC5jb20iLCJleHAiOjE3NTI1NTc4MzIsImlhdCI6MTc1MjU1NjkzMiwiaXNzIjoiQWZmb3JkIE1lZGljYWwgVGVjaG5vbG9naWVzIFByaXZhdGUgTGltaXRlZCIsImp0aSI6ImYxMTljMTQxLTcyZDYtNGQ0NC05YzU3LTVkMzMxYWI3ZTU2NSIsImxvY2FsZSI6ImVuLUlOIiwibmFtZSI6ImdhdXJhdiBqb3NoaSIsInN1YiI6ImViOGU0YTU1LTc5NGItNDJiMy1iNDY0LWIwNmJlMzZjZDY1NCJ9LCJlbWFpbCI6ImdhdXJhdmpvc2hpYWExQGdtYWlsLmNvbSIsIm5hbWUiOiJnYXVyYXYgam9zaGkiLCJyb2xsTm8iOiIyMjk0MDI5IiwiYWNjZXNzQ29kZSI6IlFBaERVciIsImNsaWVudElEIjoiZWI4ZTRhNTUtNzk0Yi00MmIzLWI0NjQtYjA2YmUzNmNkNjU0IiwiY2xpZW50U2VjcmV0IjoiUFFHaGdWcEF4cXd6Ym5WRSJ9.lXnXNP79VmcG-nVvl43OyQOtVaxtxu0FZT1IVSoN98Y';
-const HOSTNAME = 'http://localhost:3000';
+const HOSTNAME = 'http://localhost:3001';
+let accessToken = null;
+// Fetch the access token once at startup
+function initialize() {
+    return __awaiter(this, void 0, void 0, function* () {
+        accessToken = yield (0, utils_1.fetchAccessToken)(config);
+        if (!accessToken) {
+            console.error('Failed to fetch access token. Exiting...');
+            process.exit(1);
+        }
+        app.listen(3001, () => {
+            console.log('URL Shortener running on port 3000');
+        });
+    });
+}
+initialize();
 // POST /shorturls
 app.post('/shorturls', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { url, validity, shortcode } = req.body;
@@ -32,7 +52,7 @@ app.post('/shorturls', (req, res) => __awaiter(void 0, void 0, void 0, function*
             level: 'error',
             package: 'handler',
             message: 'Invalid or missing URL in request',
-            accessToken: token
+            accessToken: accessToken
         });
         return res.status(400).json({ error: 'Invalid or missing URL' });
     }
@@ -45,7 +65,7 @@ app.post('/shorturls', (req, res) => __awaiter(void 0, void 0, void 0, function*
                 level: 'error',
                 package: 'handler',
                 message: 'Invalid custom shortcode',
-                accessToken: token
+                accessToken: accessToken
             });
             return res.status(400).json({ error: 'Invalid custom shortcode' });
         }
@@ -55,7 +75,7 @@ app.post('/shorturls', (req, res) => __awaiter(void 0, void 0, void 0, function*
                 level: 'error',
                 package: 'handler',
                 message: 'Shortcode already exists',
-                accessToken: token
+                accessToken: accessToken
             });
             return res.status(409).json({ error: 'Shortcode already exists' });
         }
@@ -82,7 +102,7 @@ app.post('/shorturls', (req, res) => __awaiter(void 0, void 0, void 0, function*
         level: 'info',
         package: 'handler',
         message: `Short URL created: ${code} for ${url}`,
-        accessToken: token
+        accessToken: accessToken
     });
     return res.status(201).json({
         shortLink: `${HOSTNAME}/${code}`,
@@ -99,7 +119,7 @@ app.get('/shorturls/:shortcode', (req, res) => __awaiter(void 0, void 0, void 0,
             level: 'error',
             package: 'handler',
             message: `Shortcode not found: ${shortcode}`,
-            accessToken: token
+            accessToken: accessToken
         });
         return res.status(404).json({ error: 'Shortcode not found' });
     }
@@ -110,7 +130,7 @@ app.get('/shorturls/:shortcode', (req, res) => __awaiter(void 0, void 0, void 0,
             level: 'warn',
             package: 'handler',
             message: `Shortcode expired: ${shortcode}`,
-            accessToken: token
+            accessToken: accessToken
         });
         return res.status(410).json({ error: 'Shortcode expired' });
     }
@@ -119,7 +139,7 @@ app.get('/shorturls/:shortcode', (req, res) => __awaiter(void 0, void 0, void 0,
         level: 'info',
         package: 'handler',
         message: `Stats retrieved for shortcode: ${shortcode}`,
-        accessToken: token
+        accessToken: accessToken
     });
     return res.json({
         originalUrl: data.originalUrl,
@@ -139,7 +159,7 @@ app.get('/:shortcode', (req, res) => __awaiter(void 0, void 0, void 0, function*
             level: 'error',
             package: 'handler',
             message: `Shortcode not found: ${shortcode}`,
-            accessToken: token
+            accessToken: accessToken
         });
         return res.status(404).json({ error: 'Shortcode not found' });
     }
@@ -150,7 +170,7 @@ app.get('/:shortcode', (req, res) => __awaiter(void 0, void 0, void 0, function*
             level: 'warn',
             package: 'handler',
             message: `Shortcode expired: ${shortcode}`,
-            accessToken: token
+            accessToken: accessToken
         });
         return res.status(410).json({ error: 'Shortcode expired' });
     }
@@ -161,10 +181,7 @@ app.get('/:shortcode', (req, res) => __awaiter(void 0, void 0, void 0, function*
         level: 'info',
         package: 'handler',
         message: `Redirected for shortcode: ${shortcode}`,
-        accessToken: token
+        accessToken: accessToken
     });
     return res.redirect(data.originalUrl);
 }));
-app.listen(3000, () => {
-    console.log('URL Shortener running on port 3000');
-});

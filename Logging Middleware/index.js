@@ -12,7 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Log = Log;
 const LOG_URL = 'http://20.244.56.144/evaluation-service/logs';
 function Log(_a) {
-    return __awaiter(this, arguments, void 0, function* ({ stack, level, package: pkg, message, accessToken, }) {
+    return __awaiter(this, arguments, void 0, function* ({ stack, level, package: pkg, message, accessToken }) {
         try {
             const response = yield fetch(LOG_URL, {
                 method: 'POST',
@@ -33,8 +33,6 @@ function Log(_a) {
             }
             else {
                 const data = yield response.json();
-                // Optionally, you can log the logID or success message
-                // console.log('Log created:', data.logID);
                 return data;
             }
         }
